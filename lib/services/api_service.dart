@@ -24,17 +24,7 @@ class ApiService {
     required String cacheKey,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    final cachedData = prefs.getString(cacheKey);
-
-    if (cachedData != null) {
-      try {
-        return jsonDecode(cachedData);
-      } catch (e) {
-        print("Error decoding cache: $e");
-        prefs.remove(cacheKey);
-      }
-    }
-
+   
     try {
       final response = await http.get(Uri.parse('$baseUrl$endpoint'));
 
@@ -52,6 +42,7 @@ class ApiService {
       }
     } catch (e) {
       print("Network request failed: $e");
+      final cachedData = prefs.getString(cacheKey);
 
       // Check if cached data is available
       if (cachedData != null) {
