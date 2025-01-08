@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../services/api_service.dart';
 import '../models/mission.dart';
 import 'details_screen.dart';
+import 'package:intl/intl.dart';
 
 class MissionListScreen extends StatelessWidget {
   final ApiService apiService = ApiService();
@@ -77,6 +78,17 @@ class MissionListScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              // Format the date using DateFormat
+                              Text(
+                                mission.date != null
+                                    ? 'Date: ${DateFormat('yyyy-MM-dd').format(mission.date!)}'
+                                    : '2024-08-05',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
                                 ),
                               ),
                               SizedBox(height: 8),
