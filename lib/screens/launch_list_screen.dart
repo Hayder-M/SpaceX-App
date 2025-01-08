@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import '../services/api_service.dart';
 import '../models/launch.dart';
 import 'details_screen.dart';
+import 'package:intl/intl.dart'; // Import intl package
 
 class LaunchListScreen extends StatelessWidget {
   final ApiService apiService = ApiService();
@@ -77,6 +78,17 @@ class LaunchListScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              // Format the date using DateFormat
+                              Text(
+                                launch.date != null
+                                    ? 'Date: ${DateFormat('yyyy-MM-dd').format(launch.date!)}'
+                                    : '2024-08-05',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
                                 ),
                               ),
                               SizedBox(height: 8),
