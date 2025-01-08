@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:spacex_lm/models/mission.dart';
 import '../models/launch.dart';
 
@@ -8,12 +9,23 @@ class DetailsScreen extends StatelessWidget {
 
   const DetailsScreen({Key? key, this.launch, this.mission}) : super(key: key);
 
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final String title = launch?.name ?? mission?.name ?? 'Details';
     final String description =
         launch?.details ?? mission?.description ?? 'No details available';
     final List<String> manufacturers = mission?.manufacturers ?? [];
+    final String learnMoreUrl =
+        launch?.webUrl ?? mission?.website ?? 'https://www.spacex.com/';
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -92,11 +104,12 @@ class DetailsScreen extends StatelessWidget {
                     ),
                   ],
                   SizedBox(height: 24),
-                  // Action Button
                   Align(
                     alignment: Alignment.center,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: learnMoreUrl.isNotEmpty
+                          ? () => _launchURL(learnMoreUrl)
+                          : null,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 12),

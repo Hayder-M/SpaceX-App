@@ -6,44 +6,40 @@ class ApiService {
   final String baseUrl = "https://api.spacexdata.com/v3";
 
   Future<List<dynamic>> fetchLaunches() async {
-    final prefs = await SharedPreferences.getInstance();
-    final cachedData = prefs.getString('launches_cache');
-
-    if (cachedData != null) {
-      return jsonDecode(cachedData);
-    }
-
-    // Fetch data from API
-    final response = await http.get(Uri.parse('$baseUrl/launches'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      // Cache the data locally
-      prefs.setString('launches_cache', jsonEncode(data));
-      return data;
-    } else {
-      throw Exception('Failed to fetch launches');
-    }
+    return await _fetchData(
+      endpoint: '/launches',
+      cacheKey: 'launches_cache',
+    );
   }
 
   Future<List<dynamic>> fetchMissions() async {
+    return await _fetchData(
+      endpoint: '/missions',
+      cacheKey: 'missions_cache',
+    );
+  }
+
+  Future<List<dynamic>> _fetchData({
+    required String endpoint,
+    required String cacheKey,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
-    final cachedData = prefs.getString('missions_cache');
+    final cachedData = prefs.getString(cacheKey);
 
     if (cachedData != null) {
       return jsonDecode(cachedData);
     }
 
     // Fetch data from API
-    final response = await http.get(Uri.parse('$baseUrl/missions'));
+    final response = await http.get(Uri.parse('$baseUrl$endpoint'));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
       // Cache the data locally
-      prefs.setString('missions_cache', jsonEncode(data));
+      await prefs.setString(cacheKey, jsonEncode(data));
       return data;
     } else {
-      throw Exception('Failed to fetch missions');
+      throw Exception('Failed to fetch data from $endpoint');
     }
   }
 }
