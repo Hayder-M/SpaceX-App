@@ -10,7 +10,6 @@ class ApiService {
     final cachedData = prefs.getString('launches_cache');
 
     if (cachedData != null) {
-      // Return cached data if available
       return jsonDecode(cachedData);
     }
 
@@ -32,7 +31,6 @@ class ApiService {
     final cachedData = prefs.getString('missions_cache');
 
     if (cachedData != null) {
-      // Return cached data if available
       return jsonDecode(cachedData);
     }
 
