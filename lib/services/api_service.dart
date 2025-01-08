@@ -27,19 +27,49 @@ class ApiService {
     final cachedData = prefs.getString(cacheKey);
 
     if (cachedData != null) {
-      return jsonDecode(cachedData);
+      try {
+        return jsonDecode(cachedData);
+      } catch (e) {
+        print("Error decoding cache: $e");
+        prefs.remove(cacheKey);
+      }
     }
 
-    // Fetch data from API
-    final response = await http.get(Uri.parse('$baseUrl$endpoint'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+    try {
+      final response = await http.get(Uri.parse('$baseUrl$endpoint'));
 
-      // Cache the data locally
-      await prefs.setString(cacheKey, jsonEncode(data));
-      return data;
-    } else {
-      throw Exception('Failed to fetch data from $endpoint');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // Cache the data with a timestamp
+        await prefs.setString(cacheKey, jsonEncode(data));
+        await prefs.setString(
+            '${cacheKey}_timestamp', DateTime.now().toIso8601String());
+
+        return data;
+      } else {
+        throw Exception(
+            'Failed to fetch data from $endpoint: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Network request failed: $e");
+
+      // Check if cached data is available
+      if (cachedData != null) {
+        print("Using stale cached data.");
+        return jsonDecode(cachedData);
+      } else {
+        throw Exception('No cached data available and network request failed.');
+      }
     }
+  }
+
+  Future<bool> isCacheExpired(String cacheKey, Duration expiryDuration) async {
+    final prefs = await SharedPreferences.getInstance();
+    final timestamp = prefs.getString('${cacheKey}_timestamp');
+    if (timestamp != null) {
+      final cacheTime = DateTime.parse(timestamp);
+      return DateTime.now().difference(cacheTime) > expiryDuration;
+    }
+    return true;
   }
 }
