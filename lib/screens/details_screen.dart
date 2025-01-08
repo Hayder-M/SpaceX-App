@@ -30,7 +30,6 @@ class DetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title Section
                   Text(
                     title,
                     style: TextStyle(
@@ -39,7 +38,6 @@ class DetailsScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16),
-                  // Description Section
                   Text(
                     'Description:',
                     style: TextStyle(
@@ -59,7 +57,6 @@ class DetailsScreen extends StatelessWidget {
                   ),
                   if (manufacturers.isNotEmpty) ...[
                     SizedBox(height: 24),
-                    // Manufacturers Section
                     Text(
                       'Manufacturers:',
                       style: TextStyle(
@@ -99,9 +96,7 @@ class DetailsScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Add any desired functionality here
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 12),
